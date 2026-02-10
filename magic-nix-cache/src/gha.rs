@@ -248,5 +248,9 @@ fn path_info_to_nar_info(store: Arc<NixStore>, path_info: &ValidPathInfo, url: S
         deriver: None,
         signature: None,
         ca: path_info.ca.clone(),
+        provenance: path_info
+            .provenance
+            .as_ref()
+            .and_then(|v| serde_json::to_string(v).ok()),
     }
 }

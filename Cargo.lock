@@ -241,7 +241,7 @@ checksum = "1505bd5d3d116872e7271a6d4e16d81d0c8570876c8de68093a09ac269d8aac0"
 [[package]]
 name = "attic"
 version = "0.1.0"
-source = "git+https://github.com/DeterminateSystems/attic?branch=fixups-for-magic-nix-cache#f789ed4a186e136ea938c28551eaaf8081cc4496"
+source = "git+https://github.com/DeterminateSystems/attic?branch=fixups-for-magic-nix-cache#83c742229584d4bfc8106b7a1fc4b64ea02c30f1"
 dependencies = [
  "async-stream",
  "base64 0.22.1",
@@ -258,6 +258,7 @@ dependencies = [
  "nix-base32",
  "regex",
  "serde",
+ "serde_json",
  "serde_with",
  "serde_yaml",
  "sha2",
@@ -272,7 +273,7 @@ dependencies = [
 [[package]]
 name = "attic-client"
 version = "0.1.0"
-source = "git+https://github.com/DeterminateSystems/attic?branch=fixups-for-magic-nix-cache#f789ed4a186e136ea938c28551eaaf8081cc4496"
+source = "git+https://github.com/DeterminateSystems/attic?branch=fixups-for-magic-nix-cache#83c742229584d4bfc8106b7a1fc4b64ea02c30f1"
 dependencies = [
  "anyhow",
  "async-channel",
@@ -294,7 +295,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tokio",
- "toml",
+ "toml 0.8.23",
  "tracing",
  "tracing-subscriber",
  "xdg 2.5.2",
@@ -303,7 +304,7 @@ dependencies = [
 [[package]]
 name = "attic-server"
 version = "0.1.0"
-source = "git+https://github.com/DeterminateSystems/attic?branch=fixups-for-magic-nix-cache#f789ed4a186e136ea938c28551eaaf8081cc4496"
+source = "git+https://github.com/DeterminateSystems/attic?branch=fixups-for-magic-nix-cache#83c742229584d4bfc8106b7a1fc4b64ea02c30f1"
 dependencies = [
  "anyhow",
  "async-compression",
@@ -343,7 +344,7 @@ dependencies = [
  "sha2",
  "tokio",
  "tokio-util",
- "toml",
+ "toml 0.8.23",
  "tower-http 0.5.2",
  "tracing",
  "tracing-error",
@@ -355,7 +356,7 @@ dependencies = [
 [[package]]
 name = "attic-token"
 version = "0.1.0"
-source = "git+https://github.com/DeterminateSystems/attic?branch=fixups-for-magic-nix-cache#f789ed4a186e136ea938c28551eaaf8081cc4496"
+source = "git+https://github.com/DeterminateSystems/attic?branch=fixups-for-magic-nix-cache#83c742229584d4bfc8106b7a1fc4b64ea02c30f1"
 dependencies = [
  "attic",
  "base64 0.22.1",
@@ -4973,6 +4974,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "serde_spanned"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "40734c41988f7306bb04f0ecf60ec0f3f1caa34290e4e8ea471dcd3346483b83"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "serde_urlencoded"
 version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5518,14 +5528,13 @@ dependencies = [
 
 [[package]]
 name = "system-deps"
-version = "7.0.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e4be53aa0cba896d2dc615bd42bbc130acdcffa239e0a2d965ea5b3b2a86ffdb"
+version = "7.0.7"
+source = "git+https://github.com/DeterminateSystems/system-deps?branch=support-link_files#ba1c1f4e758eb99e6604df7885ac51ac59d0048c"
 dependencies = [
  "cfg-expr",
  "heck 0.5.0",
  "pkg-config",
- "toml",
+ "toml 0.9.5",
  "version-compare",
 ]
 
@@ -5778,9 +5787,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dc1beb996b9d83529a9e75c17a1686767d148d70663143c7854d8b4a09ced362"
 dependencies = [
  "serde",
- "serde_spanned",
- "toml_datetime",
+ "serde_spanned 0.6.9",
+ "toml_datetime 0.6.11",
  "toml_edit",
+]
+
+[[package]]
+name = "toml"
+version = "0.9.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "75129e1dc5000bfbaa9fee9d1b21f974f9fbad9daec557a521ee6e080825f6e8"
+dependencies = [
+ "indexmap 2.11.0",
+ "serde",
+ "serde_spanned 1.0.0",
+ "toml_datetime 0.7.0",
+ "toml_parser",
+ "toml_writer",
+ "winnow",
 ]
 
 [[package]]
@@ -5793,6 +5817,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "toml_datetime"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bade1c3e902f58d73d3f294cd7f20391c1cb2fbcb643b73566bc773971df91e3"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "toml_edit"
 version = "0.22.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5800,9 +5833,18 @@ checksum = "41fe8c660ae4257887cf66394862d21dbca4a6ddd26f04a3560410406a2f819a"
 dependencies = [
  "indexmap 2.11.0",
  "serde",
- "serde_spanned",
- "toml_datetime",
+ "serde_spanned 0.6.9",
+ "toml_datetime 0.6.11",
  "toml_write",
+ "winnow",
+]
+
+[[package]]
+name = "toml_parser"
+version = "1.0.6+spec-1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a3198b4b0a8e11f09dd03e133c0280504d0801269e9afa46362ffde1cbeebf44"
+dependencies = [
  "winnow",
 ]
 
@@ -5811,6 +5853,12 @@ name = "toml_write"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5d99f8c9a7727884afe522e9bd5edbfc91a3312b36a77b5fb8926e4c31a41801"
+
+[[package]]
+name = "toml_writer"
+version = "1.0.6+spec-1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ab16f14aed21ee8bfd8ec22513f7287cd4a91aa92e44edfe2c17ddd004e92607"
 
 [[package]]
 name = "tonic"
