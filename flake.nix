@@ -6,8 +6,7 @@
 
     crane.url = "https://flakehub.com/f/ipetkov/crane/*";
 
-    nix.url = "github:DeterminateSystems/nix-src";
-    # nix.url = "https://flakehub.com/f/NixOS/nix/=2.27.*";
+    nix.url = "https://flakehub.com/f/DeterminateSystems/nix-src/=3.16.*";
   };
 
   outputs =
