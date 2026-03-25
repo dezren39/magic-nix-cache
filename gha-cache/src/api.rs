@@ -553,7 +553,7 @@ impl Api {
                         .await
                         .inspect_err(|e| {
                             self.circuit_breaker_429_tripped
-                                .check_err(&e, &self.circuit_breaker_429_tripped_callback);
+                                .check_err(e, &self.circuit_breaker_429_tripped_callback);
                         })?;
 
                     offset += chunk_len;
@@ -573,7 +573,7 @@ impl Api {
                     .await
                     .inspect_err(|e| {
                         self.circuit_breaker_429_tripped
-                            .check_err(&e, &self.circuit_breaker_429_tripped_callback);
+                            .check_err(e, &self.circuit_breaker_429_tripped_callback);
                     })?;
 
                 let request = FinalizeCacheEntryUploadRequest {
@@ -596,7 +596,7 @@ impl Api {
                     })
                     .inspect_err(|e| {
                         self.circuit_breaker_429_tripped
-                            .check_err(&e, &self.circuit_breaker_429_tripped_callback);
+                            .check_err(e, &self.circuit_breaker_429_tripped_callback);
                     })
             }
         }
@@ -660,16 +660,16 @@ impl Api {
                 })
                 .await
                 .map_err(|e| e.into())
-                .and_then(|entry| {
+                .map(|entry| {
                     if entry.ok {
-                        Ok(Some(entry.signed_download_url))
+                        Some(entry.signed_download_url)
                     } else {
-                        Ok(None)
+                        None
                     }
                 })
                 .inspect_err(|e| {
                     self.circuit_breaker_429_tripped
-                        .check_err(&e, &self.circuit_breaker_429_tripped_callback);
+                        .check_err(e, &self.circuit_breaker_429_tripped_callback);
                 })
         }
     }
@@ -728,7 +728,7 @@ impl Api {
                 })
                 .inspect_err(|e| {
                     self.circuit_breaker_429_tripped
-                        .check_err(&e, &self.circuit_breaker_429_tripped_callback);
+                        .check_err(e, &self.circuit_breaker_429_tripped_callback);
                 })?;
 
             Ok(FileAllocation::V2(SignedUrl {
