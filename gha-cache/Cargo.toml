@@ -6,7 +6,6 @@ license = "Apache-2.0"
 include = ["proto"]
 
 [dependencies]
-async-trait = "0.1.68"
 bytes = { version = "1.4.0", default-features = false }
 derivative = { version = "2.2.0", default-features = false }
 futures = { version = "0.3.28", default-features = false, features = ["alloc"] }

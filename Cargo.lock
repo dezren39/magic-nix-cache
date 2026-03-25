@@ -2328,7 +2328,6 @@ name = "gha-cache"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "async-trait",
  "bytes",
  "derivative",
  "futures",
