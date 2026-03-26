@@ -92,7 +92,7 @@
       },
       "original": {
         "type": "tarball",
-        "url": "https://flakehub.com/f/DeterminateSystems/nix-src/%3D3.16.%2A"
+        "url": "https://flakehub.com/f/DeterminateSystems/nix-src/%3D3.16.3"
       }
     },
     "nixpkgs": {

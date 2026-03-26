@@ -6,7 +6,7 @@
 
     crane.url = "https://flakehub.com/f/ipetkov/crane/*";
 
-    nix.url = "https://flakehub.com/f/DeterminateSystems/nix-src/=3.16.*";
+    nix.url = "https://flakehub.com/f/DeterminateSystems/nix-src/=3.16.3";
   };
 
   outputs =
@@ -118,37 +118,43 @@
       devShells = forEachSupportedSystem (
         { system, pkgs }:
         let
-          pkgs' = pkgs.pkgsStatic;
+          pkgs' = if pkgs.stdenv.isDarwin then pkgs else pkgs.pkgsStatic;
           rustTargetSpec = pkgs'.stdenv.hostPlatform.rust.rustcTargetSpec;
           rustTargetSpecEnv = pkgs'.lib.toUpper (builtins.replaceStrings [ "-" ] [ "_" ] rustTargetSpec);
         in
         {
           default = pkgs'.mkShell {
-            env.CARGO_BUILD_TARGET = rustTargetSpec;
-            env."CARGO_TARGET_${rustTargetSpecEnv}_LINKER" = "${pkgs'.stdenv.cc.targetPrefix}cc";
-            env.RUST_SRC_PATH = "${pkgs.rustPlatform.rustcSrc}/library";
+            env = {
+              CARGO_BUILD_TARGET = rustTargetSpec;
+              "CARGO_TARGET_${rustTargetSpecEnv}_LINKER" = "${pkgs'.stdenv.cc.targetPrefix}cc";
+              RUST_SRC_PATH = "${pkgs.rustPlatform.rustcSrc}/library";
+            };
 
             inputsFrom = [ inputs.self.packages.${system}.default ];
 
-            packages = with pkgs; [
-              bashInteractive
+            packages =
+              with pkgs;
+              [
+                bashInteractive
 
-              pkgs'.rustc
-              cargo
-              pkgs'.clippy
-              rustfmt
-              rust-analyzer
+                cargo
+                rustfmt
+                rust-analyzer
 
-              protobuf # for protoc/prost
+                protobuf # for protoc/prost
 
-              cargo-bloat
-              cargo-edit
-              cargo-udeps
-              cargo-watch
-              bacon
+                cargo-bloat
+                cargo-edit
+                cargo-udeps
+                cargo-watch
+                bacon
 
-              age
-            ];
+                age
+              ]
+              ++ (with pkgs'; [
+                rustc
+                clippy
+              ]);
           };
         }
       );

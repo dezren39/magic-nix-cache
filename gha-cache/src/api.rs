@@ -14,7 +14,6 @@ use crate::github::actions::results::api::v1::{
     GetCacheEntryDownloadUrlRequest,
 };
 use crate::util::read_chunk_async;
-use async_trait::async_trait;
 use bytes::{Bytes, BytesMut};
 use futures::future;
 use rand::{distributions::Alphanumeric, Rng};
@@ -242,7 +241,6 @@ struct RequestStats {
     patch: AtomicUsize,
 }
 
-#[async_trait]
 trait ResponseExt {
     async fn check(self) -> Result<()>;
     async fn check_json<T: DeserializeOwned>(self) -> Result<T>;
@@ -553,7 +551,7 @@ impl Api {
                         .await
                         .inspect_err(|e| {
                             self.circuit_breaker_429_tripped
-                                .check_err(&e, &self.circuit_breaker_429_tripped_callback);
+                                .check_err(e, &self.circuit_breaker_429_tripped_callback);
                         })?;
 
                     offset += chunk_len;
@@ -573,7 +571,7 @@ impl Api {
                     .await
                     .inspect_err(|e| {
                         self.circuit_breaker_429_tripped
-                            .check_err(&e, &self.circuit_breaker_429_tripped_callback);
+                            .check_err(e, &self.circuit_breaker_429_tripped_callback);
                     })?;
 
                 let request = FinalizeCacheEntryUploadRequest {
@@ -596,7 +594,7 @@ impl Api {
                     })
                     .inspect_err(|e| {
                         self.circuit_breaker_429_tripped
-                            .check_err(&e, &self.circuit_breaker_429_tripped_callback);
+                            .check_err(e, &self.circuit_breaker_429_tripped_callback);
                     })
             }
         }
@@ -660,16 +658,16 @@ impl Api {
                 })
                 .await
                 .map_err(|e| e.into())
-                .and_then(|entry| {
+                .map(|entry| {
                     if entry.ok {
-                        Ok(Some(entry.signed_download_url))
+                        Some(entry.signed_download_url)
                     } else {
-                        Ok(None)
+                        None
                     }
                 })
                 .inspect_err(|e| {
                     self.circuit_breaker_429_tripped
-                        .check_err(&e, &self.circuit_breaker_429_tripped_callback);
+                        .check_err(e, &self.circuit_breaker_429_tripped_callback);
                 })
         }
     }
@@ -728,7 +726,7 @@ impl Api {
                 })
                 .inspect_err(|e| {
                     self.circuit_breaker_429_tripped
-                        .check_err(&e, &self.circuit_breaker_429_tripped_callback);
+                        .check_err(e, &self.circuit_breaker_429_tripped_callback);
                 })?;
 
             Ok(FileAllocation::V2(SignedUrl {
@@ -749,7 +747,6 @@ impl Api {
     }
 }
 
-#[async_trait]
 impl ResponseExt for reqwest::Response {
     async fn check(self) -> Result<()> {
         let status = self.status();
