@@ -1,0 +1,56 @@
+name: Build closure
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            system: x86_64-linux
+          - runner: ubuntu-24.04-arm
+            system: aarch64-linux
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Build magic-nix-cache
+        run: |
+          STORE_PATH=$(nix build .#magic-nix-cache --no-link --print-out-paths)
+          nix-store --export $(nix-store -qR "$STORE_PATH") | xz > "magic-nix-cache-closure-${{ matrix.system }}.xz"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: closure-${{ matrix.system }}
+          path: "magic-nix-cache-closure-${{ matrix.system }}.xz"
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          COMMIT_SHA=$(git rev-parse --short HEAD)
+          TAG="fix-172-${COMMIT_SHA}"
+          gh release create "$TAG" \
+            artifacts/magic-nix-cache-closure-*.xz \
+            --title "magic-nix-cache with rate-limit fix (#172)" \
+            --notes "Built from \`fix/issue-172-rate-limiting\` branch.
+          Cherry-pick of cramt's fix for GitHub Actions cache rate limiting.
+          See: https://github.com/DeterminateSystems/magic-nix-cache/pull/173"
