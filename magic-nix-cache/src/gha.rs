@@ -189,7 +189,7 @@ async fn worker(
                 .await
                 {
                     match err {
-                        Error::GhaCache(gha_cache::Error::ShuttingDown) => {
+                        Error::Api(gha_cache::api::Error::ShuttingDown) => {
                             tracing::info!("Upload cancelled due to shutdown");
                             // Don't log as error, this is expected
                         }
